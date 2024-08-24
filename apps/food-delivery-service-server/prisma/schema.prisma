@@ -1,0 +1,73 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Client {
+  address   String?
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(cuid())
+  name      String?
+  orders    Order[]
+  phone     String?
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  client       Client?          @relation(fields: [clientId], references: [id])
+  clientId     String?
+  createdAt    DateTime         @default(now())
+  id           String           @id @default(cuid())
+  orderDate    DateTime?
+  otp          String?
+  payments     Payment[]
+  restaurant   Restaurant?      @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
+  status       EnumOrderStatus?
+  totalAmount  Float?
+  updatedAt    DateTime         @updatedAt
+}
+
+model Payment {
+  amount      Float?
+  createdAt   DateTime           @default(now())
+  id          String             @id @default(cuid())
+  order       Order?             @relation(fields: [orderId], references: [id])
+  orderId     String?
+  paymentDate DateTime?
+  status      EnumPaymentStatus?
+  updatedAt   DateTime           @updatedAt
+}
+
+model Deliveryman {
+  createdAt   DateTime @default(now())
+  id          String   @id @default(cuid())
+  name        String?
+  phone       String?
+  updatedAt   DateTime @updatedAt
+  vehicleType String?
+}
+
+model Restaurant {
+  address   String?
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(cuid())
+  name      String?
+  orders    Order[]
+  phone     String?
+  updatedAt DateTime @updatedAt
+}
+
+enum EnumOrderStatus {
+  Option1
+}
+
+enum EnumPaymentStatus {
+  Option1
+}
